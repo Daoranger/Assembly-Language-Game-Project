@@ -10,6 +10,8 @@ STACK ENDS
 
 DATA SEGMENT PARA 'DATA'
 	
+	TIME_AUX DB 0  ;variable used when checking if the time has changed
+	
 	; DW, 16 bits of information because we using 16 bits registers (CX, DX)
 	BALL_X DW 0Ah  ; X position (column) of the ball
 	BALL_Y DW 0AH  ; Y position (line) of the ball
@@ -39,7 +41,21 @@ CODE SEGMENT PARA 'CODE'
 		MOV BL,00h ;choose black as background color
 		INT 10h	   ;execute the configuration
 		
-		CALL DRAW_BALL
+		CHECK_TIME:
+			
+			MOV AH, 2Ch ;get the system time
+			INT 21h		;CH = hour CL = minute DH = second DL = 1/100 seconds
+			
+			CMP DL, TIME_AUX	;is the current time equal to the previous one (TIME_AUX)?
+			JE CHECK_TIME	;if it is the same, check again		
+			
+			;if it is different, then draw, move, etc.
+			
+			MOV TIME_AUX, DL ;update time
+			INC BALL_X ; test increment the ball x position by 1
+			CALL DRAW_BALL
+			
+			JMP CHECK_TIME ;after everyhing checks time again
 		
 		RET
 		
