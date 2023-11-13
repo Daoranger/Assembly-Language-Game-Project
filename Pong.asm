@@ -16,7 +16,9 @@ DATA SEGMENT PARA 'DATA'
 	BALL_X DW 0Ah  ; X position (column) of the ball
 	BALL_Y DW 0AH  ; Y position (line) of the ball
 	BALL_SIZE DW 04h ;size of the ball (how many pixels does the ball have in width and height)
-	
+	BALL_VELOCITY_X DW 02h ;X VELOCITY of the ball
+	BALL_VELOCITY_Y DW 02h ;Y VELOCITY of the ball
+
 	
 DATA ENDS
 
@@ -50,9 +52,22 @@ CODE SEGMENT PARA 'CODE'
 			JE CHECK_TIME	;if it is the same, check again		
 			
 			;if it is different, then draw, move, etc.
-			
 			MOV TIME_AUX, DL ;update time
-			INC BALL_X ; test increment the ball x position by 1
+			
+			MOV AX, BALL_VELOCITY_X
+			ADD BALL_X, AX
+			MOV AX, BALL_VELOCITY_Y
+			ADD BALL_Y, AX
+			
+			MOV AH,00h ;set the configuration to video mode
+			MOV AL,13h ;choose the video mode
+			INT 10h	   ;execute the configuration
+			
+			MOV AH,0Bh ;set the configuration		
+			MOV BH,00h ;to the background color
+			MOV BL,00h ;choose black as background color
+			INT 10h	   ;execute the configuration
+			
 			CALL DRAW_BALL
 			
 			JMP CHECK_TIME ;after everyhing checks time again
@@ -88,5 +103,9 @@ CODE SEGMENT PARA 'CODE'
 			JNG DRAW_BALL_HORIZONTAL
 		RET	
 	DRAW_BALL ENDP
+	
+	CLEAR_SCREEN PROC NEAR
+	
+	CLEAR_SCREEN ENDP
 CODE ENDS
 END
