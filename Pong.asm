@@ -34,14 +34,7 @@ CODE SEGMENT PARA 'CODE'
 	POP AX							;release the top item from the stack to the AX register
 	POP AX							;release the top item from the stack to the AX register
 	
-		MOV AH,00h ;set the configuration to video mode
-		MOV AL,13h ;choose the video mode
-		INT 10h	   ;execute the configuration
-		
-		MOV AH,0Bh ;set the configuration		
-		MOV BH,00h ;to the background color
-		MOV BL,00h ;choose black as background color
-		INT 10h	   ;execute the configuration
+		CALL CLEAR_SCREEN
 		
 		CHECK_TIME:
 			
@@ -54,19 +47,10 @@ CODE SEGMENT PARA 'CODE'
 			;if it is different, then draw, move, etc.
 			MOV TIME_AUX, DL ;update time
 			
-			MOV AX, BALL_VELOCITY_X
-			ADD BALL_X, AX
-			MOV AX, BALL_VELOCITY_Y
-			ADD BALL_Y, AX
 			
-			MOV AH,00h ;set the configuration to video mode
-			MOV AL,13h ;choose the video mode
-			INT 10h	   ;execute the configuration
+			CALL CLEAR_SCREEN
 			
-			MOV AH,0Bh ;set the configuration		
-			MOV BH,00h ;to the background color
-			MOV BL,00h ;choose black as background color
-			INT 10h	   ;execute the configuration
+			CALL MOVE_BALL
 			
 			CALL DRAW_BALL
 			
@@ -75,6 +59,14 @@ CODE SEGMENT PARA 'CODE'
 		RET
 		
 	MAIN ENDP
+	
+	MOVE_BALL PROC NEAR
+		MOV AX, BALL_VELOCITY_X
+		ADD BALL_X, AX
+		MOV AX, BALL_VELOCITY_Y
+		ADD BALL_Y, AX
+		RET
+	MOVE_BALL ENDP
 	
 	;DRAW_BALL Procedure
 	;this part of the code draw the ball
@@ -105,7 +97,16 @@ CODE SEGMENT PARA 'CODE'
 	DRAW_BALL ENDP
 	
 	CLEAR_SCREEN PROC NEAR
-	
+			MOV AH,00h ;set the configuration to video mode
+			MOV AL,13h ;choose the video mode
+			INT 10h	   ;execute the configuration
+			
+			MOV AH,0Bh ;set the configuration		
+			MOV BH,00h ;to the background color
+			MOV BL,00h ;choose black as background color
+			INT 10h	   ;execute the configuration
+			RET
 	CLEAR_SCREEN ENDP
+	
 CODE ENDS
 END
