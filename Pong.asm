@@ -10,14 +10,18 @@ STACK ENDS
 
 DATA SEGMENT PARA 'DATA'
 	
+	WINDOW_WIDTH DW 140H		;the width of the window (320 pixels)
+	WINDOW_HEIGHT DW 0C8h		;the height of the window (200 pixels)
+	WINDOW_BOUNDS DW 6			;variable used to check collisions early
+	
 	TIME_AUX DB 0  ;variable used when checking if the time has changed
 	
 	; DW, 16 bits of information because we using 16 bits registers (CX, DX)
 	BALL_X DW 0Ah  ; X position (column) of the ball
 	BALL_Y DW 0AH  ; Y position (line) of the ball
 	BALL_SIZE DW 04h ;size of the ball (how many pixels does the ball have in width and height)
-	BALL_VELOCITY_X DW 02h ;X VELOCITY of the ball
-	BALL_VELOCITY_Y DW 02h ;Y VELOCITY of the ball
+	BALL_VELOCITY_X DW 05h ;X VELOCITY of the ball
+	BALL_VELOCITY_Y DW 05h ;Y VELOCITY of the ball
 
 	
 DATA ENDS
@@ -61,11 +65,43 @@ CODE SEGMENT PARA 'CODE'
 	MAIN ENDP
 	
 	MOVE_BALL PROC NEAR
-		MOV AX, BALL_VELOCITY_X
-		ADD BALL_X, AX
-		MOV AX, BALL_VELOCITY_Y
-		ADD BALL_Y, AX
+		MOV AX, BALL_VELOCITY_X		
+		ADD BALL_X, AX				;move the ball horizontally 
+				
+		MOV AX,WINDOW_BOUNDS
+		CMP BALL_X,AX			
+		JL NEG_VELOCITY_X			;BALL_X < 0 + WINDOW_BOUNDS(Y -> collided)
+		
+		MOV AX,WINDOW_WIDTH
+		SUB AX,BALL_SIZE
+		SUB AX,WINDOW_BOUNDS
+		CMP BALL_X,AX 				;BALL_X > WINDOW_WIDTH - BALL_SIZE - WINDOW_BOUNDS(Y -> collided)
+		JG NEG_VELOCITY_X
+		
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		MOV AX, BALL_VELOCITY_Y		;move the ball vertically
+		ADD BALL_Y,AX
+							
+		MOV AX, WINDOW_BOUNDS
+		CMP BALL_Y,AX			
+		JL NEG_VELOCITY_Y			;BALL_Y < 0 + WINDOW_BOUNDS(Y -> collided)
+						
+		MOV AX,WINDOW_HEIGHT
+		SUB AX,BALL_SIZE
+		SUB AX,WINDOW_BOUNDS
+		CMP BALL_Y,AX
+		JG NEG_VELOCITY_Y			;BALL_Y > WINDOW_HEIGHT - BALL_SIZE - WINDOW_BOUNDS (Y -> collided)		
+		
 		RET
+									
+		NEG_VELOCITY_X:
+			NEG BALL_VELOCITY_X 	;BALL_VELOCITY_X = - BALL_VELOCITY_X
+			RET
+		
+		NEG_VELOCITY_Y:
+			NEG BALL_VELOCITY_Y 	;BALL_VELOCITY_Y = - BALL_VELOCITY_Y
+			RET
+		
 	MOVE_BALL ENDP
 	
 	;DRAW_BALL Procedure
