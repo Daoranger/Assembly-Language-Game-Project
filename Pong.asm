@@ -21,11 +21,19 @@ DATA SEGMENT PARA 'DATA'
 	
 	; DW, 16 bits of information because we using 16 bits registers (CX, DX)
 	BALL_X DW 0A0h  ; X position (column) of the ball
-	BALL_Y DW 64H  ; Y position (line) of the ball
+	BALL_Y DW 64h  ; Y position (line) of the ball
 	BALL_SIZE DW 04h ;size of the ball (how many pixels does the ball have in width and height)
 	BALL_VELOCITY_X DW 05h ;X VELOCITY of the ball
-	BALL_VELOCITY_Y DW 05h ;Y VELOCITY of the ball
+	BALL_VELOCITY_Y DW 02h ;Y VELOCITY of the ball
 
+	PADDLE_LEFT_X DW 0Ah
+	PADDLE_LEFT_Y DW 0Ah
+	
+	PADDLE_RIGHT_X DW 130h
+	PADDLE_RIGHT_Y DW 0Ah
+	
+	PADDLE_WIDTH DW 05h
+	PADDLE_HEIGHT DW 1Fh
 	
 DATA ENDS
 
@@ -60,6 +68,9 @@ CODE SEGMENT PARA 'CODE'
 			CALL MOVE_BALL
 			
 			CALL DRAW_BALL
+			
+			CALL DRAW_PADDLES
+
 			
 			JMP CHECK_TIME ;after everyhing checks time again
 		
@@ -145,6 +156,58 @@ CODE SEGMENT PARA 'CODE'
 			JNG DRAW_BALL_HORIZONTAL
 		RET	
 	DRAW_BALL ENDP
+	
+	DRAW_PADDLES PROC NEAR
+		MOV CX, PADDLE_LEFT_X	;set the initial column (X)
+		MOV DX, PADDLE_LEFT_Y	;set the inital line (y)
+		
+		DRAW_PADDLE_LEFT_HORIZONTAL:
+			MOV AH,0Ch ;set the configuration to writing a pixel
+			MOV AL,0Fh ; choose white as color
+			MOV BH,00h ; set the page number
+			INT 10h	   ; execute the configuration
+			
+			INC CX	   ;CX = CX + 1
+			MOV AX, CX		   ;CX - BALL_X > BALL_SIZE (Y -> We go to the next line, N -> We continue to the next column)
+			SUB AX, PADDLE_LEFT_X
+			CMP AX, PADDLE_WIDTH
+			JNG DRAW_PADDLE_LEFT_HORIZONTAL
+			
+			MOV CX, PADDLE_LEFT_X ;the CX register goes back to the initial clumn
+			INC DX		   ;we advance one line
+			
+			MOV AX, DX		;DX - BALL_Y > PADDLE_LEFT_Y (Y -> we exit this Procedure, N -> we countinute to the next line)
+			SUB AX, PADDLE_LEFT_Y
+			CMP AX, PADDLE_HEIGHT
+			JNG DRAW_PADDLE_LEFT_HORIZONTAL
+			
+			
+		
+		MOV CX, PADDLE_RIGHT_X	;set the initial column (X)
+		MOV DX, PADDLE_RIGHT_Y	;set the inital line (y)
+		
+		DRAW_PADDLE_RIGHT_HORIZONTAL:
+			MOV AH,0Ch ;set the configuration to writing a pixel
+			MOV AL,0Fh ; choose white as color
+			MOV BH,00h ; set the page number
+			INT 10h	   ; execute the configuration
+			
+			INC CX	   ;CX = CX + 1
+			MOV AX, CX		   ;CX - BALL_X > BALL_SIZE (Y -> We go to the next line, N -> We continue to the next column)
+			SUB AX, PADDLE_RIGHT_X
+			CMP AX, PADDLE_WIDTH
+			JNG DRAW_PADDLE_RIGHT_HORIZONTAL
+			
+			MOV CX, PADDLE_RIGHT_X ;the CX register goes back to the initial clumn
+			INC DX		   ;we advance one line
+			
+			MOV AX, DX		;DX - BALL_Y > PADDLE_RIGHT we exit this Procedure, N -> we countinute to the next line)
+			SUB AX, PADDLE_RIGHT_Y
+			CMP AX, PADDLE_HEIGHT
+			JNG DRAW_PADDLE_RIGHT_HORIZONTAL
+		RET
+	DRAW_PADDLES ENDP
+	
 	
 	CLEAR_SCREEN PROC NEAR
 			MOV AH,00h ;set the configuration to video mode
