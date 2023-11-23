@@ -28,9 +28,11 @@ DATA SEGMENT PARA 'DATA'
 
 	PADDLE_LEFT_X DW 0Ah				;X position of the left paddle
 	PADDLE_LEFT_Y DW 0Ah				;Y position of the left paddle
+	PADDLE_LEFT_POINTS DB 0				;current points of the left player (P1)
 	
 	PADDLE_RIGHT_X DW 130h				;X position of the right paddle
 	PADDLE_RIGHT_Y DW 0Ah				;Y position of the right paddle
+	PADDLE_RIGHT_POINTS DB 0			;current points of the right player (P2)
 	
 	PADDLE_WIDTH DW 05h					;default paddle width
 	PADDLE_HEIGHT DW 1Fh				;default paddle height
@@ -85,7 +87,7 @@ CODE SEGMENT PARA 'CODE'
 ;		Move the ball horizontally
 		MOV AX,WINDOW_BOUNDS			;Border bounds
 		CMP BALL_X,AX					;Move it to the ball position
-		JL RESET_POSITION				;BALL_X < 0 + WINDOW_BOUNDS(Y -> collided)
+		JL GIVE_POINT_TO_PLAYER_TWO		;if is less. give one point to the player two and reset ball position
 		
 ;		Check if the ball has passed the right boundarie  (BALL_X > WINDOW_WIDTH - BALL_SIZE - WINDOW_BOUNDS)
 ;		If is colliding, restart its position
@@ -93,13 +95,33 @@ CODE SEGMENT PARA 'CODE'
 		SUB AX,BALL_SIZE	
 		SUB AX,WINDOW_BOUNDS
 		CMP BALL_X,AX 					;Ball is compared with the right boudarie of the screen (BALL_X > WINDOW_WIDTH - BALL_SIZE - WINDOW_BOUNDS(Y -> collided)
-		JG RESET_POSITION				;If it is greater, reset position (out of bound)
+		JG GIVE_POINT_TO_PLAYER_ONE		;If it is greater, give one point to the player one and reset ball position
 		JMP MOVE_BALL_VERTICALLY
 		
-		RESET_POSITION:
-			CALL RESET_BALL_POSITION			;reset the ball position to the center of the screen
+		GIVE_POINT_TO_PLAYER_ONE:		;give one point to the player on and reset ball position
+			INC PADDLE_LEFT_POINTS		;increment player one points
+			CALL RESET_BALL_POSITION	;reset the ball position to the center of the screen
+			
+			CMP PADDLE_LEFT_POINTS, 05h
+			JGE GAME_OVER
+			RET	
+			
+		GIVE_POINT_TO_PLAYER_TWO:
+			INC PADDLE_RIGHT_POINTS
+			CALL RESET_BALL_POSITION	;reset the ball position to the center of the screen
+			
+			CMP PADDLE_RIGHT_POINTS, 05h
+			JGE GAME_OVER
 			RET	
 		
+		GAME_OVER:							;someone has reached 5 points
+			MOV PADDLE_LEFT_POINTS, 00h		;restart player one points
+			MOV PADDLE_RIGHT_POINTS, 00h	;restart player two points
+			RET
+		;RESET_POSITION:
+			;CALL RESET_BALL_POSITION	;reset the ball position to the center of the screen
+			;RET	
+
 ;		Move the ball vertically
 		MOVE_BALL_VERTICALLY:
 			MOV AX, BALL_VELOCITY_Y
