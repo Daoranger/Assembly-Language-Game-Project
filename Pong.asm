@@ -94,7 +94,16 @@ CODE SEGMENT PARA 'CODE'
 		SUB AX,WINDOW_BOUNDS
 		CMP BALL_X,AX 					;Ball is compared with the right boudarie of the screen (BALL_X > WINDOW_WIDTH - BALL_SIZE - WINDOW_BOUNDS(Y -> collided)
 		JG RESET_POSITION				;If it is greater, reset position (out of bound)
+		JMP MOVE_BALL_VERTICALLY
 		
+		RESET_POSITION:
+			CALL RESET_BALL_POSITION			;reset the ball position to the center of the screen
+			RET	
+		
+;		Move the ball vertically
+		MOVE_BALL_VERTICALLY:
+			MOV AX, BALL_VELOCITY_Y
+			ADD BALL_Y, AX
 ;		Move the ball vertically
 		MOV AX, BALL_VELOCITY_Y			;move the ball vertically
 		ADD BALL_Y,AX
@@ -114,16 +123,72 @@ CODE SEGMENT PARA 'CODE'
 		CMP BALL_Y,AX					;BALL_Y is compared with the bottom boundarie of the scnreen BALL_Y > WINDOW_HEIGHT - BALL_SIZE - WINDOW_BOUNDS (Y -> collided)	
 		JG NEG_VELOCITY_Y				;if it is greater reverse the velocity in Y	
 		
-		RET
-									
-		RESET_POSITION:
-			CALL RESET_BALL_POSITION	;reset the ball position to the center of the screen
-			RET	
+;		Check if the ball is colliding with the right paddle
+;				maxx1 > minx2 && minx1 < maxx2 && maxy1 > miny2 && miny1 < maxy2
+;				BALL_X + BALL_SIZE > PADDLE_RIGHT_X && BALL_X < PADDLE_RIGHT_X + PADDLE_WIDTH 
+;    			&& BALL_Y + BALL_SIZE > PADDLE_RIGHT_Y && BALL_Y < PADDLE_RIGHT_Y + PADDLE_HEIGHT
 		
+		MOV AX,BALL_X
+		ADD AX,BALL_SIZE
+		CMP AX,PADDLE_RIGHT_X
+		JNG CHECK_COLLISION_WITH_LEFT_PADDLE	; if there's no collision check for the left paddle collisions
+		
+		MOV AX, PADDLE_RIGHT_X
+		ADD AX, PADDLE_WIDTH
+		CMP BALL_X, AX
+		JNL CHECK_COLLISION_WITH_LEFT_PADDLE	;if there's no collision check for the left paddle collisions
+		
+		MOV AX, BALL_Y
+		ADD AX, BALL_SIZE
+		CMP AX, PADDLE_RIGHT_Y
+		JNG CHECK_COLLISION_WITH_LEFT_PADDLE	;if there's no collision check for the left paddle collisions
+		
+		MOV AX, PADDLE_RIGHT_Y
+		ADD AX, PADDLE_HEIGHT
+		CMP BALL_Y, AX
+		JNL CHECK_COLLISION_WITH_LEFT_PADDLE	;if there's no collision check for the left paddle collisions
+		
+;		If it reaches this point, the ball is colliding with the right paddle
+		
+		JMP	NEG_VELOCITY_X						;reverse the horizontal velocity of the ball
+												;exit this procedure (because there's no collision witht he left paddle)
+		
+;		Check if the ball is colliding with the left paddle
+		CHECK_COLLISION_WITH_LEFT_PADDLE:
+		; maxx1 > minx2 && minx1 < maxx2 && maxy1 > miny2 && miny1 < maxy2
+		; BALL_X + BALL_SIZE > PADDLE_LEFT_X && BALL_X < PADDLE_LEFT_X + PADDLE_WIDTH 
+		; && BALL_Y + BALL_SIZE > PADDLE_LEFT_Y && BALL_Y < PADDLE_LEFT_Y + PADDLE_HEIGHT
+		
+		MOV AX,BALL_X
+		ADD AX,BALL_SIZE
+		CMP AX,PADDLE_LEFT_X
+		JNG EXIT_COLLISION_CHECK	;if there's no collision check exit procedure
+		
+		MOV AX, PADDLE_LEFT_X
+		ADD AX, PADDLE_WIDTH
+		CMP BALL_X, AX
+		JNL EXIT_COLLISION_CHECK	;if there's no collision check exit procedure
+		
+		MOV AX, BALL_Y
+		ADD AX, BALL_SIZE
+		CMP AX, PADDLE_LEFT_Y
+		JNG EXIT_COLLISION_CHECK	;if there's no collision check exit procedure
+		
+		MOV AX, PADDLE_LEFT_Y
+		ADD AX, PADDLE_HEIGHT
+		CMP BALL_Y, AX
+		JNL EXIT_COLLISION_CHECK	;if there's no collision check exit procedure
+		
+		JMP NEG_VELOCITY_X
+				
 		NEG_VELOCITY_Y:
 			NEG BALL_VELOCITY_Y 		;reverse tje ve;pcoty om Y of the ball (BALL_VELOCITY_Y = - BALL_VELOCITY_Y)
 			RET
-		
+		NEG_VELOCITY_X:
+			NEG BALL_VELOCITY_X
+			RET
+		EXIT_COLLISION_CHECK:
+			RET
 	MOVE_BALL ENDP
 
 ;	left paddle movement
