@@ -19,6 +19,7 @@ DATA SEGMENT PARA 'DATA'
 	GAME_ACTIVE DB 1					;if game is active set 1 if not set 0 (gameover)
 	WINNER_INDEX DB 0					;the index of the winner (1=p1, 2=p2)
 	CURRENT_SCENE DB 0					;0 represents main menu and 1 is the game
+	EXITING_GAME DB 0
 	
 	TEXT_PLAYER_ONE_POINTS DW '0','$'	;text with p1 points
 	TEXT_PLAYER_TWO_POINTS DW '0','$'	;text with p2 points
@@ -69,7 +70,8 @@ CODE SEGMENT PARA 'CODE'
 		CALL CLEAR_SCREEN				;set the initial video mode configurations
 		
 		CHECK_TIME:
-			
+			CMP EXITING_GAME,01h
+			JE START_EXIT_PROCESS
 			CMP CURRENT_SCENE,00h
 			JE SHOW_MAIN_MENU
 			
@@ -104,6 +106,8 @@ CODE SEGMENT PARA 'CODE'
 			SHOW_MAIN_MENU:
 				CALL DRAW_MAIN_MENU
 				JMP CHECK_TIME
+			START_EXIT_PROCESS:
+				CALL CONCLUDE_EXIT_GAME
 		
 		RET
 		
@@ -625,33 +629,38 @@ CODE SEGMENT PARA 'CODE'
 		LEA DX, TEXT_MAIN_MENU_EXIT		;give DX a pointer to string TEXT_PLAYER_ONE_POINTS
 		INT 21h		
 		
+		MAIN_MENU_WAIT_FOR_KEY:
 ;		wait for key pressed
-		MOV AH,00h
-		INT 16h
-		`
-		CMP AL,'S'
-		JE START_SINGLEPLAYER
-		CMP AL,'s'
-		JE START_SINGLEPLAYER
+			MOV AH,00h
+			INT 16h
+			`
+			CMP AL,'S'
+			JE START_SINGLEPLAYER
+			CMP AL,'s'
+			JE START_SINGLEPLAYER
+			
+			CMP AL,'M'
+			JE START_MULTIPLAYER
+			CMP AL,'m'
+			JE START_MULTIPLAYER
 		
-;		CMP AL,'M'
-;		JE START_MULTIPLAYER
-;		CMP AL,'m'
-;		JE START_MULTIPLAYER
-		
-;		CMP AL,'E'
-;		JE EXIT_GAME
-;		CMP AL,'e'
-;		JE EXIT_GAME
-;		JMP MAIN_MENU_WAIT_FOR_KEY
-		
-		START_SINGLEPLAYER:
-			MOV CURRENT_SCENE,01h
-			MOV GAME_ACTIVE,01h
-			RET
-		
-		
-		RET
+			CMP AL,'E'
+			JE EXIT_GAME
+			CMP AL,'e'
+			JE EXIT_GAME
+			JMP MAIN_MENU_WAIT_FOR_KEY
+			
+			START_SINGLEPLAYER:
+				MOV CURRENT_SCENE,01h
+				MOV GAME_ACTIVE,01h
+				RET
+			START_MULTIPLAYER:
+				JMP MAIN_MENU_WAIT_FOR_KEY
+				
+			EXIT_GAME:
+				MOV EXITING_GAME,01h
+				RET
+
 	DRAW_MAIN_MENU ENDP
 	
 	UPDATE_WINNER_TEXT PROC NEAR
@@ -674,6 +683,15 @@ CODE SEGMENT PARA 'CODE'
 			INT 10h	   						;execute the configuration
 			RET
 	CLEAR_SCREEN ENDP
+	
+	CONCLUDE_EXIT_GAME PROC NEAR
+		MOV AH,00h 						;set the configuration to video mode
+		MOV AL,02h 						;choose the video mode
+		INT 10h	   						;execute the configuration
+		
+		MOV AH,4Ch
+		INT 21h
+	CONCLUDE_EXIT_GAME ENDP
 	
 CODE ENDS
 END
