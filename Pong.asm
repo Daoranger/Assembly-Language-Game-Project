@@ -48,6 +48,7 @@ DATA SEGMENT PARA 'DATA'
 	PADDLE_RIGHT_X DW 130h				;X position of the right paddle
 	PADDLE_RIGHT_Y DW 0Ah				;Y position of the right paddle
 	PLAYER_TWO_POINTS DB 0			;current points of the right player (P2)
+	AI_CONTROLLED DB 0				;tracks if ai bot is used for right paddle
 	
 	PADDLE_WIDTH DW 05h					;default paddle width
 	PADDLE_HEIGHT DW 1Fh				;default paddle height
@@ -320,18 +321,45 @@ CODE SEGMENT PARA 'CODE'
 		
 		;right paddle movement
 		CHECK_RIGHT_PADDLE_MOVEMENT:
-			;if it is 'p' or 'P' move up
-			CMP AL,70h ;'p'
-			JE MOVE_RIGHT_PADDLE_UP
-			CMP AL, 50h ; 'P'
-			JE MOVE_RIGHT_PADDLE_UP
 			
-			;if it is 'l' or 'L' move up
-			CMP AL, 6Ch ; 'l'
-			JE MOVE_RIGHT_PADDLE_DOWN
-			CMP AL, 4Ch ; 'L'
-			JE MOVE_RIGHT_PADDLE_DOWN
-			JMP EXIT_PADDLE_MOVEMENT
+			CMP AI_CONTROLLED, 01h
+			JE CONTROL_BY_AI
+
+			CHECK_FOR_KEYS:
+
+				;if it is 'p' or 'P' move up
+				CMP AL,70h ;'p'
+				JE MOVE_RIGHT_PADDLE_UP
+				CMP AL, 50h ; 'P'
+				JE MOVE_RIGHT_PADDLE_UP
+			
+				;if it is 'l' or 'L' move up
+				CMP AL, 6Ch ; 'l'
+				JE MOVE_RIGHT_PADDLE_DOWN
+				CMP AL, 4Ch ; 'L'
+				JE MOVE_RIGHT_PADDLE_DOWN
+				JMP EXIT_PADDLE_MOVEMENT
+
+				;THE AI IS CONTROLLED BY THE AI
+			CONTROL_BY_AI:
+				;CHECK IF THE ball is above the paddle move up (ball y + ball size < paddle right y)
+				;if true move paddle up;
+				MOV AX, BALL_Y
+				ADD AX, BALL_SIZE
+				CMP AX, PADDLE_RIGHT_Y
+				JL	MOVE_RIGHT_PADDLE_UP
+
+				;check if below the paddle ( ball y > paddle right y + paddle height)
+				;move paddle down
+
+				MOV AX, PADDLE_RIGHT_Y
+				ADD AX, PADDLE_HEIGHT
+				CMP	AX, BALL_Y
+				JL	MOVE_RIGHT_PADDLE_DOWN
+
+				;if none are true don't move paddle (exit paddle movement)
+				JMP EXIT_PADDLE_MOVEMENT
+
 			
 			MOVE_RIGHT_PADDLE_UP:
 				MOV AX, PADDLE_VELOCITY
@@ -653,9 +681,14 @@ CODE SEGMENT PARA 'CODE'
 			START_SINGLEPLAYER:
 				MOV CURRENT_SCENE,01h
 				MOV GAME_ACTIVE,01h
+				MOV AI_CONTROLLED, 01h
 				RET
 			START_MULTIPLAYER:
-				JMP MAIN_MENU_WAIT_FOR_KEY
+				MOV CURRENT_SCENE, 01h
+				MOV GAME_ACTIVE, 01h
+				MOV AI_CONTROLLED, 00h
+
+				RET
 				
 			EXIT_GAME:
 				MOV EXITING_GAME,01h
