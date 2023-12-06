@@ -1,4 +1,6 @@
 # PONG!
+## For this project, we will create a game called Pong in assembly language using x8086 MASM Assembler
+# Group 1: Team Pong!
 * Hoang Nguyen (@Daoranger): Lead programmer, work on core mechanics of the game, github page.
 * Joao Lucas: Work on user interface, presentation slides
 * Balkrandeep: Work on singleplayer/AI
