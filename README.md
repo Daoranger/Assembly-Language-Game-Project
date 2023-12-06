@@ -8,11 +8,11 @@
 * Install x8086 MASM assembler and extract them into the pong directory (we will provide it to you)
 * Create the source code file called it pong.asm (for our program, we will provide you the source code 
 * Run DOSBox and use the command to cd into the Pong directory (mount c c:\user\path\path\pong
-* Once you in the pong directory type the following command in order
-** masm /a pong.asm
-** ;
-** link pong
-** ;
-** pong
+* Once you in the pong directory type the following command in order into DOSBox 
+1. masm /a pong.asm
+2. ;
+3. link pong
+4. ;
+5. pong
 * The emulator will pop up the game window
 * The game is now running and you can now play it. Have fun!
