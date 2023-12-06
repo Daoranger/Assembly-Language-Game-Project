@@ -21,6 +21,9 @@
 # Lab Report:
 [Project Report Pong - Hoang Nguyen, Joao Lucas Veras, Balkarandeep Singh .pdf](https://github.com/Daoranger/Assembly-Language-Game-Project/files/13590184/Project.Report_.Pong.-.Hoang.Nguyen.Joao.Lucas.Veras.Balkarandeep.Singh.pdf)
 
+# Presentation Slide:
+[Pong Presentation - Hoang Nguyen, Joao Lucas Veras, Balkarandeep Singh .pptx](https://github.com/Daoranger/Assembly-Language-Game-Project/files/13590196/Pong.Presentation.-.Hoang.Nguyen.Joao.Lucas.Veras.Balkarandeep.Singh.pptx)
+
 # Snapshots:
 <img width="863" alt="Main Menu" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/f644c958-4a54-4710-8eef-6f293db780fb">
 <img width="863" alt="image" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/9886bffc-fb11-4933-856d-84208b58541c">
