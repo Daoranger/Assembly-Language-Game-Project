@@ -18,6 +18,8 @@
 * The emulator will pop up the game window
 * The game is now running and you can now play it.
 * Have fun!
+# Lab Report:
+[Project Report Pong - Hoang Nguyen, Joao Lucas Veras, Balkarandeep Singh .pdf](https://github.com/Daoranger/Assembly-Language-Game-Project/files/13590184/Project.Report_.Pong.-.Hoang.Nguyen.Joao.Lucas.Veras.Balkarandeep.Singh.pdf)
 
 # Snapshots:
 <img width="863" alt="Main Menu" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/f644c958-4a54-4710-8eef-6f293db780fb">
@@ -28,3 +30,4 @@
 
 # References:
 https://www.youtube.com/@ProgrammingDimension
+
