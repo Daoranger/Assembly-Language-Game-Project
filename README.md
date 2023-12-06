@@ -17,3 +17,10 @@
 * The emulator will pop up the game window
 * The game is now running and you can now play it.
 * Have fun!
+
+# Snapshots:
+<img width="863" alt="Main Menu" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/f644c958-4a54-4710-8eef-6f293db780fb">
+<img width="863" alt="image" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/9886bffc-fb11-4933-856d-84208b58541c">
+<img width="865" alt="image" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/060bcac9-345e-40d4-937c-70614e923b05">
+<img width="861" alt="image" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/744f6e3a-425b-4e5b-add8-f3d66a8c3ffe">
+<img width="863" alt="Exit Game" src="https://github.com/Daoranger/Assembly-Language-Game-Project/assets/132038723/9671fd0f-bf5e-4a34-81ff-5f348a4e215a">
