@@ -15,4 +15,5 @@
 4. ;
 5. pong
 * The emulator will pop up the game window
-* The game is now running and you can now play it. Have fun!
+* The game is now running and you can now play it.
+* Have fun!
