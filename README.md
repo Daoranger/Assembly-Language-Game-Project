@@ -1,5 +1,5 @@
 # PONG!
-* Hoang Nguyen: Lead programmer, work on core mechanics of the game, github page.
+* Hoang Nguyen (@Daoranger): Lead programmer, work on core mechanics of the game, github page.
 * Joao Lucas: Work on user interface, presentation slides
 * Balkrandeep: Work on singleplayer/AI
 
