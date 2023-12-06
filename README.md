@@ -1,7 +1,7 @@
 # PONG!
-* Hoang Nguyen
-* Joao Lucas
-* Balkrandeep
+* Hoang Nguyen: Lead programmer, work on core mechanics of the game, github page.
+* Joao Lucas: Work on user interface, presentation slides
+* Balkrandeep: Work on singleplayer/AI
 
 # How to Run the Game: 
 * Create a directory (name it pong or whatever you want) in your computer, this is where your pong.asm source code and the 8086 MASM assembler are going to be in.
