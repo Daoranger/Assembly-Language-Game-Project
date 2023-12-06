@@ -20,6 +20,7 @@
 * The emulator will pop up the game window
 * The game is now running and you can now play it.
 * Have fun!
+* Link to download DOSBox Emulator: https://www.dosbox.com/download.php?main=1
 # Lab Report:
 [Project Report Pong - Hoang Nguyen, Joao Lucas Veras, Balkarandeep Singh .pdf](https://github.com/Daoranger/Assembly-Language-Game-Project/files/13590184/Project.Report_.Pong.-.Hoang.Nguyen.Joao.Lucas.Veras.Balkarandeep.Singh.pdf)
 
